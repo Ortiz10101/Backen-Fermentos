@@ -20,6 +20,7 @@ export default class MongoConn {
   }
 
   public async connectDB() {
+    mongoose.set('strictQuery', false)
     mongoose.connect(
       `${config.get("mongodb.url")}/${config.get("mongodb.database")}`,
       config.get("mongodb.options"),
