@@ -28,13 +28,31 @@ export default class FermentedController {
           }
     }
 
-    async readProduct(id: string): Promise<IResponse>{
+    async getProductbyid(id: string): Promise<IResponse>{
         try {
             this.connection = this.server.app.locals.dbConnection;
             const producto = await Fermentado.findById(id)
             return { ok: true, message: "Product found", response: producto, code: 200 };
         } catch (err) {
             logger.error(`[FermentedController/readProduct] ${err}`);
+            return { ok: false, message: "Error ocurred", response: err, code: 500 };
+        } finally {
+            if ( this.connection ) await this.server.app.locals.dbConnection.release(this.connection)
+          }
+    }
+
+    async findProducts( per_page: number, page: number): Promise<IResponse>{
+        try {
+            this.connection = this.server.app.locals.dbConnection;
+            const product = await Fermentado.find().limit(per_page).skip(per_page * (page - 1));
+
+            if (!product || product.length < 1) {
+                return { ok: false, message: 'thera are no products available!', response: null, code: 404, }
+            }
+
+            return { ok: true, message: 'Products found!', response: product, code: 200, }
+        } catch (err) {
+            logger.error(`[FermentedController/findProducts] ${err}`);
             return { ok: false, message: "Error ocurred", response: err, code: 500 };
         } finally {
             if ( this.connection ) await this.server.app.locals.dbConnection.release(this.connection)
