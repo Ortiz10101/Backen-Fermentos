@@ -1,13 +1,16 @@
 import { Router, Request, Response } from "express";
 import logger from "../lib/logger";
 import FermentedController from "./controllers/fermented.controller";
+import userController from "./controllers/user.controller";
 
 const routes = Router();
 const fermentedctrl = new FermentedController();
+const userctrl = new userController();
 
 routes.post("/createProduct", async (req: Request, res: Response) =>{
-    const  producto = req.body;
+    const { producto } = req.body;
     try {
+        console.log(producto)
         const response = await fermentedctrl.createProduct(producto);
         return res.status(response.code).json(response);
     } catch (err: any) {
@@ -54,6 +57,16 @@ routes.delete("/deleteProduct/:id", async (req: Request, res: Response) =>{
         return res.status(response.code).json(response);
     } catch (err : any) {
         return res.status(err.code ? err.code : 500).json(err); 
+    }
+})
+
+routes.post("/createUser", async (req: Request, res: Response ) => {
+    try {
+        const { user } = req.body
+        const response = await userctrl.createUser(user)
+        return res.status(response.code).json(response)
+    } catch (err: any) {
+        return res.status(err.code ? err.code: 500).json(err)   
     }
 })
 
