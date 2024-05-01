@@ -3,11 +3,13 @@ import logger from "../lib/logger";
 import FermentedController from "./controllers/fermented.controller";
 import userController from "./controllers/user.controller";
 import Authenticate from "./middlewares/authentication.middleware";
+import FileController from "./controllers/file.controller";
 
 const routes = Router();
 const fermentedctrl = new FermentedController();
 const userctrl = new userController();
 const authentication = new Authenticate;
+const filectrl = new FileController();
 
 routes.post("/createProduct", async (req: Request, res: Response) =>{
     const { producto } = req.body;
@@ -85,6 +87,16 @@ routes.post("/login", async (req: Request, res: Response ) => {
 routes.get("/hola", authentication.authentication, async(req: Request, res: Response) => {
     try {
         return res.status(200).json({message: "hola onichan"})
+    } catch (err: any) {
+        return res.status(err.code ? err.code: 500).json(err)   
+    }
+})
+
+routes.post("/massive-load", async (req: Request, res: Response ) => {
+    try {
+        const fileCSV = req.files
+        const response = await filectrl.massiveLoad(fileCSV)
+        return res.status(response.code).json(response)
     } catch (err: any) {
         return res.status(err.code ? err.code: 500).json(err)   
     }

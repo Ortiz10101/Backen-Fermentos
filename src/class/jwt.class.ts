@@ -8,6 +8,15 @@ export default class jwtClass{
         return token
     }
 
+    async decodeToken(token: string){
+        try {
+            const decodeToken = jwt.verify(token, this.keyJWT, {algorithms: ['HS512']})
+            return decodeToken
+        } catch (err) {
+          return false  
+        }
+    }
+
     async tokenExp(token:string){
         const payload64 = token.split('.')[1]
         const payloadUser = JSON.parse(atob(payload64))

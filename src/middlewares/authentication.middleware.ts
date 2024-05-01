@@ -14,12 +14,12 @@ export default class Authenticate{
                 }
                 return res.status(response.code).json(response)
             }
-            const token = req.headers.authorization.replace("Bearer", "") as string
+            const token = req.headers.authorization.replace("Bearer ", "") as string
             const jwt = new jwtClass();
-            if(!(await jwt.tokenExp(token))){
+            if(!(await jwt.decodeToken(token))){
                 const response: IResponse = {
                     ok: false,
-                    message: "Token expirado",
+                    message: "Token invalido",
                     response: null,
                     code: 403
                 }
