@@ -74,6 +74,27 @@ routes.post("/createUser", async (req: Request, res: Response ) => {
     }
 })
 
+routes.get('/find_Users/:per_page/:page', async(req: Request, res: Response) => {
+    const { per_page }: any = req.params
+    const { page }: any = req.params
+    try {
+        const response = await userctrl.findAllUsers(Number(per_page), Number(page))
+        return res.status( response.code ).json( response )
+    } catch(err: any) {
+        return res.status(err.code ? err.code : 500).json(err)
+    }
+})
+
+routes.get("/get_user_by_email/:email", async (req:  Request, res: Response) =>{
+    const email = req.params.email;
+    try {
+        const response = await userctrl.getUserByEmail(email)
+        return res.status(response.code).json(response);
+    } catch (err : any) {
+        return res.status(err.code ? err.code : 500).json(err);
+    }
+});
+
 routes.post("/login", async (req: Request, res: Response ) => {
     try {
         const user = req.body

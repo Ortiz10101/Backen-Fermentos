@@ -12,7 +12,7 @@ export default class FileController {
         this.csvUtil = new CsvUtil();
         this.server = HttpServer.instance;
     }
-
+    /* metodo para carga masiva via csv*/
     async massiveLoad(fileCSV: any): Promise<IResponse> {
         try {
             if (!fileCSV) {
@@ -26,6 +26,7 @@ export default class FileController {
             let productosUpdate = []
             this.connection = this.server.app.locals.dbConnection;
             const productos = await this.csvUtil.csvToJson(fileCSV)
+            //se genera una iteracion con el for para buscar, actualizar y/o crear productos
             for (let fermento of productos){
                 const fermentoFind = await Fermentado.findOne({sku: fermento.sku})
                 if (!fermentoFind){
@@ -37,6 +38,7 @@ export default class FileController {
                     productosUpdate.push(productUpdate)
                 }
             }
+            //se genera un objeto para guardar los productos creados y actualizados
             const fermentoResponse = {
                 productosSave, 
                 productosUpdate
