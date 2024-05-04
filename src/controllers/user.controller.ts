@@ -105,4 +105,46 @@ export default class userController {
             if (this.connection) await this.server.app.locals.dbConnection.release(this.connection)
         }
     }
+    //actualizar usuario
+    async updateUser(user: IUser): Promise <IResponse>{
+        try {
+            this.connection = this.server.app.locals.dbConnection;
+            const usuario = await User.findOneAndUpdate({ email: user.email }, user, {
+                returnDocument: "after",
+                select: "-salt -password",
+            })
+            if (!usuario) {
+                return ({ ok: false, message: "user does not found", response: null, code: 404 });
+            }
+            return ({ ok: true, message: "user updated", response: usuario, code: 200 });
+   
+        } catch (err) {
+            logger.error(`[UserController/updateUser] ${err}`);
+            return { ok: false, message: "Error ocurred", response: err, code: 500 };
+        } finally {
+            if (this.connection) await this.server.app.locals.dbConnection.release(this.connection)
+        }
+    }
+    //borrar usuario
+    async deleteUser(email: string): Promise <IResponse>{
+        try {
+            const userDeleted = await User.findOneAndDelete({email: email}, { select: "-salt -password" });
+
+          if (!userDeleted) {
+            return ({
+              ok: false,
+              message: `user with email ${email} does not exist`,
+              response: null,
+              code: 404,
+            });
+          }
+
+          return ({ ok: true, message: "user deleted", response: userDeleted, code: 200 });
+        } catch (err) {
+            logger.error(`[UserController/deleteUser] ${err}`);
+            return { ok: false, message: "Error ocurred", response: err, code: 500 };
+        } finally {
+            if (this.connection) await this.server.app.locals.dbConnection.release(this.connection)
+        }
+    }
 }

@@ -63,7 +63,17 @@ routes.delete("/deleteProduct/:id", async (req: Request, res: Response) =>{
         return res.status(err.code ? err.code : 500).json(err); 
     }
 })
-
+//ruta para carga masiva
+routes.post("/massive-load", async (req: Request, res: Response ) => {
+    try {
+        const fileCSV = req.files
+        const response = await filectrl.massiveLoad(fileCSV)
+        return res.status(response.code).json(response)
+    } catch (err: any) {
+        return res.status(err.code ? err.code: 500).json(err)   
+    }
+})
+//rutas para CRUD de usuarios
 routes.post("/createUser", async (req: Request, res: Response ) => {
     try {
         const { user } = req.body
@@ -95,6 +105,26 @@ routes.get("/get_user_by_email/:email", async (req:  Request, res: Response) =>{
     }
 });
 
+routes.put("/updateUser", async (req: Request, res: Response) =>{
+    const user = req.body.user;
+    try {
+        const response = await userctrl.updateUser(user);
+        return res.status(response.code).json(response);
+    } catch (err: any) {
+        return res.status(err.code ? err.code : 500).json(err);
+    }
+});
+
+routes.delete("/deleteUser/:email", async (req: Request, res: Response) =>{
+    const email = req.params.email;
+    try {
+        const response = await userctrl.deleteUser(email);
+        return res.status(response.code).json(response);
+    } catch (err : any) {
+        return res.status(err.code ? err.code : 500).json(err); 
+    }
+})
+
 routes.post("/login", async (req: Request, res: Response ) => {
     try {
         const user = req.body
@@ -108,16 +138,6 @@ routes.post("/login", async (req: Request, res: Response ) => {
 routes.get("/hola", authentication.authentication, async(req: Request, res: Response) => {
     try {
         return res.status(200).json({message: "hola onichan"})
-    } catch (err: any) {
-        return res.status(err.code ? err.code: 500).json(err)   
-    }
-})
-
-routes.post("/massive-load", async (req: Request, res: Response ) => {
-    try {
-        const fileCSV = req.files
-        const response = await filectrl.massiveLoad(fileCSV)
-        return res.status(response.code).json(response)
     } catch (err: any) {
         return res.status(err.code ? err.code: 500).json(err)   
     }
