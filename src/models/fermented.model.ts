@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
+import IFermented from "../interface/fermented.interface";
 
-const fermentedSchema: Schema = new Schema(
+const fermentedSchema: Schema = new Schema<IFermented>(
     {
-        id: { type: String },
         sku: { type: String, unique: true, required: true},
         date_created: { type: String },
         date_expires: { type: String },

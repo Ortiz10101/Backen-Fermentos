@@ -3,5 +3,6 @@ export default interface IResponse {
     message: string;
     response: any;
     code: number;
+    token?: string;
   }
   
